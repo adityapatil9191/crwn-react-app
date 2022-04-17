@@ -7,7 +7,7 @@ import { singnInWithGooglePopup,
     // signInWIthGoogleRedirect,
     // auth
  } from "../../utils/firebase/firebase.utls"
-
+import './authentication.styles.scss'
 
 const Authentication = () => {
 
@@ -22,11 +22,6 @@ const Authentication = () => {
     //     fetchData()
     // },[])
 
-    const logGoogleUser = async () =>{
-        const response =  await singnInWithGooglePopup();
-        const userDocRef = await createUserDocumentFromAuth(response.user);
-        
-    }
     // use below code if we are using signup with redirection
     // const logGoogleRedirectUser = async () =>{
     //     const { user } = await signInWIthGoogleRedirect();
@@ -34,8 +29,7 @@ const Authentication = () => {
     // }
 
     return (
-        <div>
-            <h1>Sign In Page</h1>
+        <div className="authentication-container">
             <SignInForm/>
             <SignUpForm/>
             {/* <button onClick={logGoogleRedirectUser}>

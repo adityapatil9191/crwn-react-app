@@ -1,6 +1,6 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import { createAuthUserWithEmailAndPassword, createUserDocumentFromAuth } from "../../utils/firebase/firebase.utls";
+import { createAuthUserWithEmailAndPassword, singnInWithGooglePopup,createUserDocumentFromAuth, signInAuthUserWIthEmailAndPassword } from "../../utils/firebase/firebase.utls";
 import FormInput from "../form-input/form-input.component";
 import './sign-in-form.styles.scss'
 import Button from "../button/button.component";
@@ -21,22 +21,35 @@ const SignInForm = () =>{
         event.preventDefault();
 
         try{
-            
+            const response = await signInAuthUserWIthEmailAndPassword(email,password);
+            console.log(response)
+            resetFormFields()
         }catch(error){
-            
+            switch(error.code){
+                case 'auth/wrong-password':
+                alert('incorrect password for email');
+                break
+                case 'auth/user-not-found':
+                alert('no user associated with this email');
+                break
+                default:
+                    console.log(error)
+            }
         }
     }
-
+    const signInWithGoogle = async () =>{
+        const {user} =  await singnInWithGooglePopup();
+        await createUserDocumentFromAuth(user);
+        
+    }
     const handleChange = (event) => {
-        console.log(event)
         const {name, value} = event.target;
-        console.log({...formFields,[name]:value})
         setFormFields({...formFields,[name]:value})
     }
     return (
         <div className="sign-up-container">
             <h2>Already have an account?</h2>
-            <h1>Sign up with you email and password</h1>
+            <h1>Sign in with your email and password</h1>
             <form onSubmit={handleSubmit}>
 
                 <FormInput
@@ -56,7 +69,10 @@ const SignInForm = () =>{
                     value={password}
                     name="password"
                 />
-                <Button type='submit'>Sign In</Button>
+                <div className="buttons-container">
+                <Button type='submit' onClick={handleSubmit}>Sign In</Button>
+                <Button type='button' buttonType='google' onClick={signInWithGoogle}>Google sign in</Button>
+                </div>
             </form>
         </div>
     )
